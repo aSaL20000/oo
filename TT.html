@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Timers</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-image: url('https://i.postimg.cc/GmS0Ncvv/Screenshot-2024-02-11-10-44-22-504.png');
+      background-size: cover;
+      background-position: center;
+    }
+    .timer-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px; /* Adjust this value to shift items down */
+    }
+    .timer {
+      font-size: 30px;
+      padding: 15px;
+      font-weight: bold;
+      border-radius: 10px;
+      margin: 0 10px;
+      background-image: linear-gradient(to bottom, #751b1b, #f9cf68, #6a0202);
+      color: #333;
+    }
+    button {
+      font-size: 30px;
+      padding: 20px 40px;
+      border: none;
+      font-weight: bold;
+      border-radius: 10px;
+      background-image: linear-gradient(to bottom, #737373, #737373, #402727);
+      color: white;
+      cursor: pointer;
+      position: absolute;
+      bottom: 100px; /* Adjust this value as needed */
+      left: 50%; /* Adjust this value to position the button */
+      transform: translateX(-50%);
+    }
+
+    /* Adjust the positions of timer elements */
+    #player1-timer {
+      position: absolute;
+      top: 500px;
+      left: 550px;
+    }
+
+    #player2-timer {
+      position: absolute;
+      top: 500px;
+      right: 550px;
+    }
+
+    #player1-turn-timer {
+      position: absolute;
+      bottom: 300px;
+      left: 495px;
+    }
+
+    #player2-turn-timer {
+      position: absolute;
+      bottom: 300px;
+      right: 495px;
+    }
+  </style>
+</head>
+<body>
+  <div class="timer-container">
+    <div class="timer" id="player1-timer">Player 1 Timer: 450</div>
+    <div class="timer" id="player2-timer">Player 2 Timer: 450</div>
+  </div>
+  <div class="timer-container">
+    <div class="timer" id="player1-turn-timer">Player 1 Turn Timer: 50</div>
+    <div class="timer" id="player2-turn-timer">Player 2 Turn Timer: 50</div>
+  </div>
+  <button onclick="endTurn()">End Turn</button>
+
+  <script>
+    let player1TotalTime = 450;
+    let player2TotalTime = 450;
+    let player1TurnTime = 50;
+    let player2TurnTime = 50;
+    let currentPlayer = 1;
+    let turnTimer;
+
+    function updateTimers() {
+      document.getElementById('player1-timer').textContent = `Player 1 Timer: ${player1TotalTime}`;
+      document.getElementById('player2-timer').textContent = `Player 2 Timer: ${player2TotalTime}`;
+      document.getElementById('player1-turn-timer').textContent = `Player 1 Turn Timer: ${player1TurnTime}`;
+      document.getElementById('player2-turn-timer').textContent = `Player 2 Turn Timer: ${player2TurnTime}`;
+    }
+
+    function startTurnTimer() {
+      turnTimer = setInterval(() => {
+        if (currentPlayer === 1) {
+          player1TurnTime--;
+          document.getElementById('player1-turn-timer').textContent = `Player 1 Turn Timer: ${player1TurnTime}`;
+          if (player1TurnTime === 0) {
+            endTurn();
+          }
+        } else {
+          player2TurnTime--;
+          document.getElementById('player2-turn-timer').textContent = `Player 2 Turn Timer: ${player2TurnTime}`;
+          if (player2TurnTime === 0) {
+            endTurn();
+          }
+        }
+      }, 1000);
+    }
+
+    function endTurn() {
+      clearInterval(turnTimer);
+      if (currentPlayer === 1) {
+        currentPlayer = 2;
+        player1TurnTime = 50;
+        document.getElementById('player1-turn-timer').textContent = `Player 1 Turn Timer: ${player1TurnTime}`;
+        startTurnTimer();
+      } else {
+        currentPlayer = 1;
+        player2TurnTime = 50;
+        document.getElementById('player2-turn-timer').textContent = `Player 2 Turn Timer: ${player2TurnTime}`;
+        startTurnTimer();
+      }
+    }
+
+    function checkGameStatus() {
+      if (player1TotalTime <= 0) {
+        alert('Player 2 wins! Player 1 ran out of time.');
+        clearInterval(turnTimer);
+      } else if (player2TotalTime <= 0) {
+        alert('Player 1 wins! Player 2 ran out of time.');
+        clearInterval(turnTimer);
+      }
+    }
+
+    // Start the turn timer for the initial player
+    startTurnTimer();
+
+    // Decrement player 1's time every second
+    setInterval(() => {
+      if (currentPlayer === 1) {
+        player1TotalTime--;
+        updateTimers();
+        checkGameStatus();
+      }
+    }, 1000);
+
+    // Decrement player 2's time every second
+    setInterval(() => {
+      if (currentPlayer === 2) {
+        player2TotalTime--;
+        updateTimers();
+        checkGameStatus();
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
